@@ -45,6 +45,9 @@
               git status --porcelain | grep -q . && { echo "Main branch is not clean. aborting"; exit 1; } || :
               git fetch origin main && git diff --quiet origin/main HEAD || { echo "Local main branch differs from remote. aborting"; exit 1; }
               sudo docker build --build-arg GOVERSION=$(get-go-version)-alpine --platform linux/amd64,linux/arm64 -t lcwllmr/mdbin .
+              sudo docker image tag lcwllmr/mdbin lcwllmr/mdbin:latest
+              sudo docker push lcwllmr/mdbin:latest
+              sudo docker image tag lcwllmr/mdbin:latest lcwllmr/mdbin:$(git rev-parse --short HEAD)
               sudo docker push lcwllmr/mdbin:$(git rev-parse --short HEAD)
             '';
           };
