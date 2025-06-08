@@ -43,7 +43,7 @@
               git branch --show-current | grep -q main || { echo "Current branch is not main. aborting"; exit 1; }
               run-go-maintanence # if this changes anything, the next step will fail (intended behavior)
               git status --porcelain | grep -q . && { echo "Main branch is not clean. aborting"; exit 1; } || :
-              git fetch origin main && git diff --quiet origin/main HEAD || echo "Local main branch differs from remote. aborting" && exit 1
+              git fetch origin main && git diff --quiet origin/main HEAD || { echo "Local main branch differs from remote. aborting"; exit 1; }
               sudo docker build --build-arg GOVERSION=$(get-go-version)-alpine --platform linux/amd64,linux/arm64 -t lcwllmr/mdbin .
               sudo docker push lcwllmr/mdbin:$(git rev-parse --short HEAD)
             '';
