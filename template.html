@@ -1,0 +1,82 @@
+{{if .Standalone}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css" integrity="sha512-BrOPA520KmDMqieeM7XFe6a3u3Sb3F1JBaQnrIAmWg3EYrciJ+Qqe6ZcKCdfPv26rGcgTrJnZ/IdQEct8h3Zhw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+    .markdown-body {
+        box-sizing: border-box;
+        min-width: 200px;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 45px;
+    }
+    @media (max-width: 767px) {
+        .markdown-body {
+            padding: 15px;
+        }
+    }
+
+    {{if .Mathjax}}
+    mjx-container[jax="CHTML"][display="true"] {
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-width: 100%;
+        padding: 0.5em 0;
+    }
+    {{end}}
+    </style>
+</head>
+<body class="markdown-body">
+    <div id="markdown-content">
+{{end}}
+
+    <h1> {{.Title}}</h1>
+    <p><small class="date">{{.Date}}</small></p>
+    {{.TableOfContents}}
+    {{.Content}}
+
+{{if .Standalone}}
+    </div>
+
+    {{if .Mathjax}}
+    <script>
+      MathJax = {
+          tex: {
+            inlineMath: [['\\(', '\\)']],
+            displayMath: [['\\[', '\\]']],
+          }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    {{end}}
+
+    {{if .Preview}}
+    <script>
+      const ws = new WebSocket(`ws://${window.location.host}`);
+      console.log("WebSocket connection established");
+      ws.onmessage = (event) => {
+        console.log(event);
+        const updatedContent = event.data;
+        document.getElementById("markdown-content").innerHTML = updatedContent;
+        console.log("Markdown content updated");
+
+        if (typeof MathJax !== 'undefined') {
+          MathJax.typesetPromise().then(() => {
+            console.log("MathJax typeset completed");
+          }).catch((err) => {
+            console.error("MathJax typeset error:", err);
+          });
+        }
+      };
+      ws.onclose = () => {
+          console.log("WebSocket connection closed");
+      };
+    </script>
+    {{end}}
+</body>
+</html>
+{{end}}

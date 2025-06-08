@@ -1,4 +1,5 @@
-.devenv
-.direnv
+.devenv/
+.direnv/
 
+result
 mdbin
